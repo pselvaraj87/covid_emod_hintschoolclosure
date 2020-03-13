@@ -10,9 +10,9 @@
                         "Target_Property_Value": "Work"
                     },
                     "Trigger_Condition_List": [
-                        "NewInfection"
+                        "Births"
                     ],
-                    "Duration": 1
+                    "Duration": 2
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
