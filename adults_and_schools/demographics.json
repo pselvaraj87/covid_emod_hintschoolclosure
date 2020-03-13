@@ -79,11 +79,8 @@
                 ],
                 "TransmissionMatrix": {
                     "Route": "Contact",
-                    "Note1": "90% reduction with-in group transmission after closure",
-                    "Note2": "Community always transmits to children, see last three 1.0s in row #1",
-                    "Note3": "Work always transmits to children, see last three 1.0s in row #5",
-                    "Note4": "ES, JH, and HS never transmit to *_interventions, see last three 0.0s in rows #2-#4",
-                    "Note5": "*_intervention never transmits to ES, JH, or HS, see three 0.0s in columns #2-#4 of rows #6-#8",
+                    "Note1": "Adults change behavior and reduce transmission by 50%",
+                    "Note2": "Schools close and within group transmission between children drops by 90%",
                     "Matrix": [
                         [ 1.000, 1.000, 1.000, 1.000, 1.000, 0.000, 0.000, 0.000, 0.000, 0.000 ],
                         [ 1.000, 1.000, 1.000, 1.000, 1.000, 1.000, 1.000, 0.000, 0.000, 0.000 ],
