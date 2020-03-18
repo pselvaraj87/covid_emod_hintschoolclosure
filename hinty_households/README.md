@@ -8,7 +8,7 @@ We then use a python script to load this .dtk file as json, and adding a Househo
 
 The python script that manipulates the serialized pop file saves a new file with the HH IPs. This then is used as an input to the DTK. There is a third Python script that takes the demographics.json file and adds a Household IP and Transmission Matrix. The output of this is used as the actual demographics.json for the subsequent simulation.
 
-##Step 1: Get serialized pop file with just age buckets
+## Step 1: Get serialized pop file with just age buckets
 Run DTK for a single timestep with age bucket IPs (note these are NOT Age_Bins which actually map to ages, they are just labels). Set following parameters of interest:
 
 ```
@@ -25,7 +25,7 @@ Example of running from command line:
 ```
 
 
-##Step 2: Add household IPs to serialized pop file
+## Step 2: Add household IPs to serialized pop file
 To take .dtk file from DTK run and add household IPs:
 
 ```
@@ -44,7 +44,7 @@ The relevant code, this is just test proof-of-concept, is:
     ser_pop.write()
 ```
 
-##Step 3: Add households to demographics file
+## Step 3: Add households to demographics file
 To add households to new demographics file (so modified serialized population will be accepted and to have HH tx matrix):
 
 ```
@@ -55,7 +55,7 @@ python3 add_hh_to_demo.py <orig_demog.json> <new_demog.json>
 Make sure the number of households matches.
 
 
-##Step 4: Run desired simulation.
+## Step 4: Run desired simulation.
 Run DTK a la:
 
 ```
