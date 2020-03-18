@@ -19,7 +19,7 @@
         "Default_Geography_Initial_Node_Population": 1000,
         "Default_Geography_Torus_Size": 10,
         "Demographics_Filenames": [
-            "hint_schoolclosure_fromser_demographics2.json"
+            "hint_schoolclosure_fromser_demographics.json"
         ],
         "Disable_IP_Whitelist": 1,
         "Enable_Aging": 1,

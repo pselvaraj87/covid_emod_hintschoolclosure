@@ -44,6 +44,7 @@ class SerializedPopulation:
 
         self.dtk.compression = dft.LZ4      #dft.NONE gives an error and dtkFileTools __write_chunks__
 #        self.dtk.compressed = False
+        print( f"Saving file {output_file}." )
         dft.write(self.dtk, output_file)
 
     def getNextInfectionSuid(self):
@@ -307,13 +308,20 @@ if __name__ == "__main__":
     save this.
 
     """
+    hh_id_set = []
     # poc, no serious households
     for person in range(len(node_0["individualHumans"])):
-        hh_id = random.randint( 0, 500 ) # 1000 households
+        hh_id = random.randint( 0, 24 ) 
+        if hh_id not in hh_id_set:
+            hh_id_set.append( hh_id )
         node_0["individualHumans"][person]["Properties"].append( "Household:" + str(hh_id) )
 
     ser_pop.write()
     #ser_pop.close()
+    id_filename = "household_ids.json"
+    print( f"Writing file {id_filename}." )
+    with open( id_filename , "w" ) as new_hhds_json:
+        json.dump( hh_id_set, new_hhds_json )
 
     pass    # breakpoint
 
