@@ -6,6 +6,7 @@ import random
 import json
 import scipy.stats
 import collections
+from collections import defaultdict
 import pathlib
 import difflib
 import copy
@@ -287,7 +288,11 @@ def getPropertyValues_Individual(node_id, handle, property):
 
 
 
-
+def count_dict( map2lsit ):
+    accum = 0
+    for key in map2lsit.keys():
+        accum += len(map2lsit[key])
+    return accum
 
 if __name__ == "__main__":
     #serialized_file = "state-00010.dtk"
@@ -310,11 +315,34 @@ if __name__ == "__main__":
     """
     hh_id_set = []
     # poc, no serious households
+    hh = json.loads( open( "households.json" ).read() ) # this is a household structure
+    agegroup_to_hh_map = defaultdict(list)
+    for hh_id in hh:
+        for elem in hh[hh_id]:
+            agegroup_to_hh_map[ elem ].append( int(hh_id) )
+
     for person in range(len(node_0["individualHumans"])):
-        hh_id = random.randint( 0, 24 ) 
+        #if person == 9585:
+            #pdb.set_trace()
+        hh_id = -1
+        #hh_id = random.randint( 0, 2499 ) # brute force way of giving someone a household id at random
+        # 1) Figure out what age bucket this person is in.
+        age_bucket = node_0["individualHumans"][person]["Properties"][0].split(':')[1]
+        # 2) Search through household structure for next unfilled slot matching that 
+        if len( agegroup_to_hh_map[ age_bucket ] ) > 0:
+            hh_id = agegroup_to_hh_map[ age_bucket ].pop() 
+        else:
+            for agebucketkey in agegroup_to_hh_map.keys():
+                if len( agegroup_to_hh_map[ agebucketkey ] ) > 0:
+                    hh_id = agegroup_to_hh_map[ agebucketkey ].pop() 
+                    break
         if hh_id not in hh_id_set:
             hh_id_set.append( hh_id )
+        print( "Assigning individual {} to household id {} leaving {} elements.".format( person, hh_id, count_dict(agegroup_to_hh_map) ) )
         node_0["individualHumans"][person]["Properties"].append( "Household:" + str(hh_id) )
+        if hh_id == -1:
+            print( "Failed to find household id for " + str( person ) )
+            #pdb.set_trace()
 
     ser_pop.write()
     #ser_pop.close()
