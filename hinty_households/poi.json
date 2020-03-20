@@ -1,0 +1,9 @@
+{
+    "Default_Config_Path": "config_fromser.json",
+    "parameters": {
+        "Base_Infectivity": 20.0,
+        "Run_Number": 1,
+        "Simulation_Duration": 150,
+        "logLevel_StrainAwareTransmissionGroups": "VALID"
+    }
+}
