@@ -12,7 +12,6 @@ def application( timestep ):
     # Create a new campaign file which distributes SimpleVaccine to those individuals.
     # This will require creation of new method to target interventions by individual id
 
-
     # CREATE TABLE SIM_EVENTS (SIM_TIME       INT    NOT NULL,EVENT          TEXT     NOT NULL,INDIVIDUAL     INT    NOT NULL,MISC           INT    NOT NULL);
 
     no_op = True
@@ -22,6 +21,14 @@ def application( timestep ):
     victims_to_treat = []
     with sqlite3.connect('simulation_events.db') as conn:
         cur = conn.cursor()
+        # test query
+        query = "SELECT COUNT(*) from SIM_EVENTS;".format( timestep ) 
+        cur.execute( query )
+        rows = cur.fetchone()
+        if rows[0] == 0:
+            print( "SIM_EVENTS db is empty! Ok at beginning of simulation but something might be wrong." )
+            return ""
+
         query = "SELECT INDIVIDUAL from SIM_EVENTS where SIM_TIME=={} and EVENT=='NewlySymptomatic';".format( timestep ) 
         cur.execute( query )
         rows = cur.fetchall()
@@ -29,6 +36,9 @@ def application( timestep ):
             infector = row[0]
             #print( f"Found newly symptomatic individual {infector}. Look for victims..." )
             newly_symptos.append( infector )
+
+        if len(newly_symptos)==0:
+            print( "Found NO newly symptomatic individuals to contact trace." )
 
         for infector in newly_symptos:
             #print( "Looking for victims of {}".format( infector ) )
@@ -42,11 +52,12 @@ def application( timestep ):
                 #print( f"Found infected victim {infected} of {infector}." )
                 victims_to_treat.append( infected )
 
-    if len(victims_to_treat ) > 0:
-        print( "Going to distribute vaccines to {}.".format( victims_to_treat ) )
+    if len( victims_to_treat ) > 0:
+        #print( "Going to distribute vaccines to {}.".format( victims_to_treat ) )
         no_op = False
 
     if no_op:
+        print( "Not distributing any 'contact tracing' isolations this time." )
         return ""
 
     campaign = {}
@@ -63,8 +74,8 @@ def application( timestep ):
                     "Vaccine_Type": "TransmissionBlocking",
                     "Waning_Config": {
                         "class": "WaningEffectBox",
-                        "Initial_Effect": 0.5,
-                        "Box_Duration": 30
+                        "Initial_Effect": 0.8,
+                        "Box_Duration": 14
                     }
                 },
                 "Target_Demographic": "ExplicitIDs",
@@ -78,7 +89,7 @@ def application( timestep ):
         """
     )
     event["Start_Day"] = float(timestep+1)
-    event["Event_Coordinator_Config"]["Intervention_Config"]["ID_List"] = victims_to_treat
+    event["Event_Coordinator_Config"]["ID_List"] = victims_to_treat
     campaign["Events"].append( event )
     with open( "contact_trace.json", "w" ) as camp_file:
         json.dump( campaign, camp_file )

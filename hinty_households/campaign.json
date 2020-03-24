@@ -27,7 +27,7 @@
             "Event_Coordinator_Config": {
                 "Intervention_Config": {
                     "Incubation_Period_Override": 0,
-                    "Number_Cases_Per_Node": 100,
+                    "Number_Cases_Per_Node": 1,
                     "class": "Outbreak"
                 },
                 "class": "StandardInterventionDistributionEventCoordinator"
@@ -36,6 +36,33 @@
                 "class": "NodeSetAll"
             },
             "Start_Day": 2,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Intervention_Config": {
+                    "class": "NodeLevelHealthTriggeredIV",
+                    "Actual_IndividualIntervention_Config": {
+                        "class": "SimpleVaccine",
+                        "Vaccine_Type": "TransmissionBlocking",
+                        "Waning_Config": {
+                            "class": "WaningEffectBox",
+                            "Initial_Effect": 0.95,
+                            "Box_Duration": 30
+                        }
+                    },
+                    "Trigger_Condition_List": [
+                        "NewlySymptomatic"
+                    ],
+                    "_Duration": 2
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 10,
             "class": "CampaignEvent"
         }
     ],

@@ -3,6 +3,7 @@ import json
 import numpy as np
 import pdb
 import random
+import sys # ArgParse is too heavy
 
 """
 S=Senior (actually not yet)
@@ -31,7 +32,8 @@ child_random = { 0: "C", 1: "ES", 2: "JH", 3: "ES"  }
 hhs = {}
 person_id = 0
 hh_id = 0
-while person_id < 10000:
+pop = int(sys.argv[1]) if len(sys.argv)>=1 else 1000
+while person_id < pop:
     hhs[hh_id] = [] # insert elem into dict for all members of this household
     hh_size = int(np.random.exponential(2)+1)
     #pdb.set_trace()

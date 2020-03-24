@@ -1,7 +1,7 @@
 import sys
 
 #sys.path.append("C:\\Users\\tfischle\\Github\\DtkTrunk_master\\Scripts\\serialization")
-import dtkFileTools as dft
+import dtk_FileTools as dft
 import random
 import json
 import scipy.stats
