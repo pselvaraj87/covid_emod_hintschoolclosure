@@ -1,7 +1,6 @@
 import sys
 
-#sys.path.append("C:\\Users\\tfischle\\Github\\DtkTrunk_master\\Scripts\\serialization")
-import dtk_FileTools as dft
+import emod_api.serialization.dtkFileTools as dft
 import random
 import json
 import scipy.stats
@@ -338,7 +337,16 @@ if __name__ == "__main__":
                     break
         if hh_id not in hh_id_set:
             hh_id_set.append( hh_id )
+
+        #hh_id = random.randint(0,50) # 10 works, 12, 15 & 25 gives warnins, no crash; 50 fails
         print( "Assigning individual {} to household id {} leaving {} elements.".format( person, hh_id, count_dict(agegroup_to_hh_map) ) )
+
+        # First, remove any existing Household property
+        for ip in node_0["individualHumans"][person]["Properties"]:
+            if "Household" in ip:
+                print( "Removing IP " + str( ip ) )
+                node_0["individualHumans"][person]["Properties"].remove( ip )
+
         node_0["individualHumans"][person]["Properties"].append( "Household:" + str(hh_id) )
         if hh_id == -1:
             print( "Failed to find household id for " + str( person ) )
