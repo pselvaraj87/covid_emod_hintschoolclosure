@@ -1,0 +1,6 @@
+{
+    "Default_Config_Path": "config_stage1.json",
+    "parameters": {
+        "x_Base_Population": 1
+    }
+}
