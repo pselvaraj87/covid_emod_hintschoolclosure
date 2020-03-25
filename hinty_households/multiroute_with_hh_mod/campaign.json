@@ -27,7 +27,7 @@
             "Event_Coordinator_Config": {
                 "Intervention_Config": {
                     "Incubation_Period_Override": 0,
-                    "Number_Cases_Per_Node": 20,
+                    "Number_Cases_Per_Node": 1,
                     "class": "Outbreak"
                 },
                 "class": "StandardInterventionDistributionEventCoordinator"

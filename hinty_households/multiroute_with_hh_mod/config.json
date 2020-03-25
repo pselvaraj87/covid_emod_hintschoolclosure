@@ -6,7 +6,7 @@
         "Base_Individual_Sample_Rate": 1,
         "Base_Infectivity": 40,
         "Base_Infectivity_Distribution": "EXPONENTIAL_DISTRIBUTION",
-        "Base_Infectivity_Exponential": 10.0,
+        "Base_Infectivity_Exponential": 1.0,
         "Base_Mortality": 0,
         "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
         "Birth_Rate_Time_Dependence": "NONE",
