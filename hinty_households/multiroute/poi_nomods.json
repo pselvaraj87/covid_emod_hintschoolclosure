@@ -1,0 +1,23 @@
+{
+    "Default_Config_Path": "config_fromser.json",
+    "parameters": {
+        "Base_Infectivity_Distribution": "EXPONENTIAL_DISTRIBUTION",
+        "Base_Infectivity_Exponential": 10.0,
+        "Demographics_Filenames": [
+            "hint_schoolclosure_mr_demographics.json"
+        ],
+        "Enable_Superinfection": 0,
+        "Infectious_Period_Distribution": "GAUSSIAN_DISTRIBUTION",
+        "Infectious_Period_Gaussian_Mean": 10,
+        "Infectious_Period_Gaussian_Std_Dev": 4,
+        "Run_Number": 1,
+        "Serialized_Population_Filenames": [ "stage1_1k_mr_output/state-00000.dtk" ],
+        "Simulation_Duration": 150,
+        "Symptomatic_Infectious_Offset": 2,
+        "Python_Inprocessing_Tsteps": [],
+        "logLevel_StrainIdentity": "VALID",
+        "logLevel_NodeLevelHealthTriggeredIV": "VALID",
+        "__logLevel_StrainAwareTransmissionGroups": "VALID",
+        "___logLevel_StrainAwareTransmissionGroups": "VALID"
+    }
+}
