@@ -21,7 +21,7 @@
         "Default_Geography_Initial_Node_Population": 1000,
         "Default_Geography_Torus_Size": 10,
         "Demographics_Filenames": [
-            "hint_schoolclosure_mr_demographics.json"
+            "hint_schoolclosure_mr_hh_demographics.json"
         ],
         "Disable_IP_Whitelist": 1,
         "Enable_Aging": 1,
@@ -46,8 +46,13 @@
         "Enable_Skipping": 0,
         "Enable_Spatial_Output": 0,
         "Enable_Strain_Tracking": 0,
+        "Enable_Superinfection": 0,
         "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Enable_Vital_Dynamics": 0,
+        "Environmental_Cutoff_Days": 2,
+        "Environmental_Peak_Start": 2,
+        "Environmental_Ramp_Down_Duration": 2,
+        "Environmental_Ramp_Up_Duration": 2,
         "Geography": "SamplesInput",
         "Incubation_Period_Constant": 13,
         "Incubation_Period_Distribution": "CONSTANT_DISTRIBUTION",
@@ -69,6 +74,7 @@
         "Mortality_Blocking_Immunity_Decay_Rate": 0.001,
         "Mortality_Blocking_Immunity_Duration_Before_Decay": 90,
         "Mortality_Time_Course": "MORTALITY_AFTER_INFECTIOUS",
+        "Node_Contagion_Decay_Rate": 1.0,
         "Node_Grid_Size": 0.042,
         "Num_Cores": 1,
         "PKPD_Model": "FIXED_DURATION_CONSTANT_EFFECT",
@@ -91,9 +97,10 @@
         "Sample_Rate_20_Plus": 1,
         "Sample_Rate_5_9": 1,
         "Sample_Rate_Birth": 1,
+        "Serialization_Time_Steps": [
+            0
+        ],
         "Serialization_Type": "TIMESTEP",
-        "_Serialized_Population_Filenames": [ "state-tequal1.dtk" ],
-        "Serialization_Time_Steps": [ 0 ],
         "Simulation_Duration": 1,
         "Simulation_Timestep": 1,
         "Simulation_Type": "ENVIRONMENTAL_SIM",
@@ -106,20 +113,17 @@
         "Symptomatic_Infectious_Offset": 0,
         "Transmission_Blocking_Immunity_Decay_Rate": 0.01,
         "Transmission_Blocking_Immunity_Duration_Before_Decay": 90,
+        "_Serialized_Population_Filenames": [
+            "state-tequal1.dtk"
+        ],
+        "__logLevel_default": "DEBUG",
         "x_Air_Migration": 1,
-        "x_Base_Population": 10,
+        "x_Base_Population": 1,
         "x_Birth": 1,
         "x_Larval_Habitats": 1,
         "x_Local_Migration": 1,
         "x_Other_Mortality": 1,
         "x_Regional_Migration": 1,
-        "x_Sea_Migration": 1,
-        "__logLevel_default": "DEBUG",
-        "Enable_Superinfection": 0,
-            "Environmental_Cutoff_Days": 2,
-            "Environmental_Peak_Start": 2,
-            "Environmental_Ramp_Down_Duration": 2,
-            "Environmental_Ramp_Up_Duration": 2,
-            "Node_Contagion_Decay_Rate": 1.0
+        "x_Sea_Migration": 1
     }
 }
