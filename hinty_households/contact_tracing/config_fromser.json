@@ -48,8 +48,8 @@
         "Enable_Vital_Dynamics": 0,
         "Geography": "SamplesInput",
         "Incubation_Period_Constant": 13,
-        "Incubation_Period_Distribution": "CONSTANT_DISTRIBUTION",
-        "Incubation_Period_Exponential": 1,
+        "Incubation_Period_Distribution": "EXPONENTIAL_DISTRIBUTION",
+        "Incubation_Period_Exponential": 2,
         "Individual_Sampling_Type": "TRACK_ALL",
         "Infection_Updates_Per_Timestep": 1,
         "Infectious_Period_Distribution": "EXPONENTIAL_DISTRIBUTION",
@@ -94,7 +94,7 @@
         "__Serialization_Time_Steps": [ 0 ],
         "Simulation_Duration": 100,
         "Simulation_Timestep": 1,
-        "Simulation_Type": "GENERIC_SIM",
+        "Simulation_Type": "ENVIRONMENTAL_SIM",
         "Spatial_Output_Channels": [
             "Prevalence",
             "New_Infections"

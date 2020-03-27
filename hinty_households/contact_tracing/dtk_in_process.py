@@ -17,7 +17,7 @@ def application( timestep ):
     no_op = True
     
     timestep = int(float(timestep))-1
-    if timestep < 5000:
+    if timestep < 25:
         return ""
 
     newly_symptos = []
@@ -37,14 +37,14 @@ def application( timestep ):
         rows = cur.fetchall()
         for row in rows:
             infector = row[0]
-            #print( f"Found newly symptomatic individual {infector}. Look for victims..." )
+            print( f"Found newly symptomatic individual {infector}. Look for victims..." )
             newly_symptos.append( infector )
 
         if len(newly_symptos)==0:
             print( "Found NO newly symptomatic individuals to contact trace." )
 
         for infector in newly_symptos:
-            #print( "Looking for victims of {}".format( infector ) )
+            print( "Looking for victims of {}".format( infector ) )
             cur2 = conn.cursor()
             query2 = "SELECT INDIVIDUAL from SIM_EVENTS where SIM_TIME<={} and SIM_TIME>{} and EVENT=='NewInfection' and MISC=={};".format( timestep, timestep-20, infector )
             cur2.execute( query2 )
@@ -52,7 +52,7 @@ def application( timestep ):
             for row in rows2:
                 #print( str( row ) )
                 infected = row[0]
-                #print( f"Found infected victim {infected} of {infector}." )
+                print( f"Found infected victim {infected} of {infector}." )
                 if random.random() < 0.5: # 50% prob of finding contacts -- this is something we'll want to sweep over
                     victims_to_treat.append( infected )
 
