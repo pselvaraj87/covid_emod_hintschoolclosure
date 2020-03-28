@@ -313,6 +313,7 @@ if __name__ == "__main__":
 
     """
     hh_id_set = []
+    primary_id_set = []
     # poc, no serious households
     hh = json.loads( open( "households.json" ).read() ) # this is a household structure
     agegroup_to_hh_map = defaultdict(list)
@@ -320,13 +321,49 @@ if __name__ == "__main__":
         for elem in hh[hh_id]:
             agegroup_to_hh_map[ elem ].append( int(hh_id) )
 
+    # multiiply by 10 for 10k pop. This is toy/1k
+    # communities: 0..99
+    communities = 10
+    # es: 100..119
+    es_es = 2
+    # jh: 120..139
+    jh_es = 2
+    # hs: 140..159
+    hs_es = 2
+    # work: 160..259
+    works = 10
+    age_bucket_2_primary_id = {}
+    age_bucket_2_primary_id["Community"] = {}
+    age_bucket_2_primary_id["Community"]["min"] = 0
+    age_bucket_2_primary_id["Community"]["range"] = communities 
+    age_bucket_2_primary_id["ES"] = {}
+    age_bucket_2_primary_id["ES"]["min"] = age_bucket_2_primary_id["Community"]["min"] + age_bucket_2_primary_id["Community"]["range"] # 100
+    age_bucket_2_primary_id["ES"]["range"] = es_es
+    age_bucket_2_primary_id["JH"] = {}
+    age_bucket_2_primary_id["JH"]["min"] = age_bucket_2_primary_id["ES"]["min"] + age_bucket_2_primary_id["ES"]["range"] # 120
+    age_bucket_2_primary_id["JH"]["range"] = jh_es
+    age_bucket_2_primary_id["HS"] = {}
+    age_bucket_2_primary_id["HS"]["min"] = age_bucket_2_primary_id["JH"]["min"] + age_bucket_2_primary_id["JH"]["range"] # 140
+    age_bucket_2_primary_id["HS"]["range"] = hs_es
+    age_bucket_2_primary_id["Work"] = {}
+    age_bucket_2_primary_id["Work"]["min"] = age_bucket_2_primary_id["HS"]["min"] + age_bucket_2_primary_id["HS"]["range"] # 160
+    age_bucket_2_primary_id["Work"]["range"] = works
+
     for person in range(len(node_0["individualHumans"])):
-        #if person == 9585:
-            #pdb.set_trace()
         hh_id = -1
-        #hh_id = random.randint( 0, 2499 ) # brute force way of giving someone a household id at random
         # 1) Figure out what age bucket this person is in.
         age_bucket = node_0["individualHumans"][person]["Properties"][0].split(':')[1]
+        newmin = age_bucket_2_primary_id[age_bucket]["min"]
+        newmax = newmin + age_bucket_2_primary_id[age_bucket]["range"]
+        print( f"newmin = {newmin}, newmax = {newmax}." )
+        primary_id = random.randint( newmin, newmax-1 )
+        print( f"DRYRUN: Assign primary id to individual {person} of {primary_id}." )
+        node_0["individualHumans"][person]["Properties"][0] = "Primary:" + str(primary_id)
+        if primary_id not in primary_id_set:
+            primary_id_set.append( primary_id )
+        # age_bucket is one of: Communnity, Work, ES, JH, or HS.
+        # we want to change this to a value Primary_XXX but XXX should be based on their age_bucket
+
         # 2) Search through household structure for next unfilled slot matching that 
         if len( agegroup_to_hh_map[ age_bucket ] ) > 0:
             hh_id = agegroup_to_hh_map[ age_bucket ].pop() 
@@ -353,11 +390,16 @@ if __name__ == "__main__":
             #pdb.set_trace()
 
     ser_pop.write()
-    #ser_pop.close()
+
     id_filename = "household_ids.json"
     print( f"Writing file {id_filename}." )
     with open( id_filename , "w" ) as new_hhds_json:
-        json.dump( hh_id_set, new_hhds_json )
+        json.dump( sorted(hh_id_set), new_hhds_json )
+
+    id_filename = "primary_ids.json"
+    print( f"Writing file {id_filename}." )
+    with open( id_filename , "w" ) as new_primaryids_json:
+        json.dump( sorted(primary_id_set), new_primaryids_json )
 
     pass    # breakpoint
 
