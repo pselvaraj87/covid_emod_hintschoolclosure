@@ -11,6 +11,7 @@ import difflib
 import copy
 import random
 import pdb
+import os
 
 counter = 0
 nextInfectionSuid_initialized = False
@@ -293,34 +294,7 @@ def count_dict( map2lsit ):
         accum += len(map2lsit[key])
     return accum
 
-if __name__ == "__main__":
-    #serialized_file = "state-00010.dtk"
-    #path = pathlib.PureWindowsPath(r"C:\Users\tfischle\Desktop\Eradication_2.21\output", serialized_file)
-    path = sys.argv[1]
-
-    ser_pop = SerializedPopulation(path)
-
-    node_0 = ser_pop.nodes[0]
-    #pdb.set_trace()
-
-    """
-    foreach household as hh_id...
-    foreach person in hh_id as [ age_bucket ]....
-    search through node_0["individualHumans"] for unique individual eq age_bucket in [idx]["Properties"]
-    node_0["individualHumans][idx]["Properties"].append( "Household:<hh_id> )
-
-    save this.
-
-    """
-    hh_id_set = []
-    primary_id_set = []
-    # poc, no serious households
-    hh = json.loads( open( "households.json" ).read() ) # this is a household structure
-    agegroup_to_hh_map = defaultdict(list)
-    for hh_id in hh:
-        for elem in hh[hh_id]:
-            agegroup_to_hh_map[ elem ].append( int(hh_id) )
-
+def map_age_bucket_to_primary():
     # multiiply by 10 for 10k pop. This is toy/1k
     # communities: 0..99
     communities = 10
@@ -348,23 +322,74 @@ if __name__ == "__main__":
     age_bucket_2_primary_id["Work"] = {}
     age_bucket_2_primary_id["Work"]["min"] = age_bucket_2_primary_id["HS"]["min"] + age_bucket_2_primary_id["HS"]["range"] # 160
     age_bucket_2_primary_id["Work"]["range"] = works
+    return age_bucket_2_primary_id 
 
+if __name__ == "__main__":
+    """
+    Inputs:
+    This script looks for a households.json file, which explicitly contains a dict of household ids and the
+    constituents of those households, but only but age bucket (e.g., Worker, Elementary Schooler, Community-Person).
+    It also takesa  .dtk input file.
+
+    Outputs:
+    - my_sp_file.dtk
+    - household_ids.json
+    - primary_ids.json
+
+    Function:
+    - Primary ID ends up as 0th IP
+    - Household ID ends up as 1st IP
+    """
+    path = sys.argv[1]
+
+    ser_pop = SerializedPopulation(path)
+
+    node_0 = ser_pop.nodes[0]
+
+    """
+    foreach household as hh_id...
+    foreach person in hh_id as [ age_bucket ]....
+    search through node_0["individualHumans"] for unique individual eq age_bucket in [idx]["Properties"]
+    node_0["individualHumans][idx]["Properties"].append( "Household:<hh_id> )
+
+    save this.
+
+    """
+    # poc, no serious households
+    if not os.path.exists( "households.json" ):
+        print( "Couldn't find households.json file. Need that to define household structure." )
+        sys.exit()
+
+    hh = json.loads( open( "households.json" ).read() ) # this is a household structure
+    agegroup_to_hh_map = defaultdict(list)
+    for hh_id in hh:
+        for elem in hh[hh_id]:
+            agegroup_to_hh_map[ elem ].append( int(hh_id) )
+
+    age_bucket_2_primary_id = map_age_bucket_to_primary()
+
+    hh_id_set = []
+    primary_id_set = []
     for person in range(len(node_0["individualHumans"])):
         hh_id = -1
         # 1) Figure out what age bucket this person is in.
         age_bucket = node_0["individualHumans"][person]["Properties"][0].split(':')[1]
+        # 2) Get range of ids that cover this bucket
         newmin = age_bucket_2_primary_id[age_bucket]["min"]
         newmax = newmin + age_bucket_2_primary_id[age_bucket]["range"]
-        print( f"newmin = {newmin}, newmax = {newmax}." )
+        #print( f"newmin = {newmin}, newmax = {newmax}." )
+        # 3) Get primary_id as random number in this range
         primary_id = random.randint( newmin, newmax-1 )
-        print( f"DRYRUN: Assign primary id to individual {person} of {primary_id}." )
+        # 4) Do the assignment
+        print( f"Assigning individual {person} to primary group {primary_id} ." )
         node_0["individualHumans"][person]["Properties"][0] = "Primary:" + str(primary_id)
+        # 5) Store every used primary id to report to DTK.
         if primary_id not in primary_id_set:
             primary_id_set.append( primary_id )
         # age_bucket is one of: Communnity, Work, ES, JH, or HS.
         # we want to change this to a value Primary_XXX but XXX should be based on their age_bucket
 
-        # 2) Search through household structure for next unfilled slot matching that 
+        # 6) Search through household structure for next unfilled slot matching that 
         if len( agegroup_to_hh_map[ age_bucket ] ) > 0:
             hh_id = agegroup_to_hh_map[ age_bucket ].pop() 
         else:
@@ -389,6 +414,10 @@ if __name__ == "__main__":
             print( "Failed to find household id for " + str( person ) )
             #pdb.set_trace()
 
+    # very verbose final dump to console for troubleshooting
+    for person in range(len(node_0["individualHumans"])):
+        print( "Individual {} has properties {} and {}.".format( person, node_0["individualHumans"][person]["Properties"][0], node_0["individualHumans"][person]["Properties"][1] ) )
+
     ser_pop.write()
 
     id_filename = "household_ids.json"
@@ -400,61 +429,4 @@ if __name__ == "__main__":
     print( f"Writing file {id_filename}." )
     with open( id_filename , "w" ) as new_primaryids_json:
         json.dump( sorted(primary_id_set), new_primaryids_json )
-
-    pass    # breakpoint
-
-
-
-
-
-
-    #  path_from = pathlib.PureWindowsPath(r"C:\Users\tfischle\Github\DtkTrunk_master\Regression\Generic\72_Generic_RngPerNode_FromSerializedPop")
-    # path_save = pathlib.PureWindowsPath(
-    #     r"C:\Users\tfischle\Github\DtkTrunk_master\Regression\Generic\13_Generic_Individual_Properties\state-00015_test.dtk")
-    #
-    # ser_pop = SerializedPopulation(str(path) + '/' + serialized_file)
-    # ser_pop_from = SerializedPopulation(str(path_from) + '/' + serialized_file)
-    #
-    #
-    # individual = createIndividual(ser_pop.getNextIndividualSuid(0), copy_ind=ser_pop.nodes[0].individualHumans[0])
-    # print(individual)
-    # add2(ser_pop.nodes[0],"individualHumans", individual)
-    #
-    # ser_pop.close()
-    # ser_pop.write(path_save)
-
-
-    # df = pandas.DataFrame.from_records([ser_pop.nodes[0]], columns=ser_pop.nodes[0].keys())
-    #    df = pandas.io.json.json_normalize(ser_pop.nodes[0].individualHumans, 'infections')
-    # df1 = pandas.DataFrame(ser_pop.nodes[0].individualHumans)
-#    df = pandas.io.json.json_normalize(ser_pop.nodes[0].individualHumans, 'infections', ['infectiousness'])
-    #    df = pandas.io.json.json_normalize(ser_pop.nodes[0].individualHumans)
-
-    # int = [pandas.DataFrame(i) for i in df["interventions"]]
-
-    #    print(int)
-
-    # import tabulate
-    # print(tabulate.tabulate(interventions[3], headers='keys', tablefmt='psql'))
-    #
-    # print(interventions[0]["__class__"])
-
-#    df.to_html("table.html")
-
-    # fct = lambda ind: len(ind["infections"]) >= 1
-    # ind_values = getPropertyValues(ser_pop.nodes[0].individualHumans, "m_age", sub_path="infections", fct=fct)
-    #
-    # print(find("age", ser_pop.nodes))
-    # show(ser_pop.nodes[0].individualHumans[10].m_age)
-    #
-    # node0 = ser_pop.nodes[0]
-    # ind_values = getPropertyValues(node0.individualHumans, "m_age")
-    #
-    # plt.hist(ind_values, bins=20)
-    # plt.title("m_age")
-    # plt.xlabel("days")
-    # plt.ylabel("number of indivuals")
-    # plt.show()
-
-#    print(find("infection", pop.nodes))
 
